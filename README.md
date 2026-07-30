@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/agentes-erp.png" width="120" alt="" />
+</p>
+
 # Agentes de IA sobre ERP — siete bots verticales en Odoo
 
 Caso de estudio de arquitectura: siete agentes conversacionales integrados en Odoo 17, cada uno especializado en un dominio de negocio, que ejecutan acciones reales sobre el ERP en lugar de limitarse a consultarlo. El código es propiedad del cliente — esta vitrina documenta la arquitectura, no publica el fuente.
