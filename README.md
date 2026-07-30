@@ -28,7 +28,7 @@ Los siete comparten un mismo patrón, replicado y adaptado dominio a dominio:
 
 ```mermaid
 flowchart LR
-    U["Usuario<br/>(chat Smart Team)"] --> AG["smart.team.agent<br/>(dispatcher LLM)"]
+    U["Usuario<br/>(chat del ERP)"] --> AG["Agente<br/>(dispatcher LLM)"]
     AG --> J["Veredicto en JSON<br/>validado contra esquema cerrado"]
     J --> ORM["Guarda en el ORM<br/>(control técnico en create/write)"]
     ORM --> MOD["Modelos de datos propios<br/>por dominio"]
@@ -38,7 +38,7 @@ flowchart LR
     H --> EXT["Integración externa<br/>(TGSS · SEPE · PLACSP · Meta · etc.)"]
 ```
 
-- **Usuario de servicio con permisos explícitos**: cada agente opera con un `api_user_id` propio y nivel de acceso configurado en código, no con el usuario administrador.
+- **Usuario de servicio con permisos explícitos**: cada agente opera con un usuario de servicio propio y nivel de acceso configurado en código, no con el usuario administrador.
 - **Veredicto JSON en vez de escritura directa.** El diseño inicial dejaba que el modelo escribiera directamente en el ERP; se sustituyó por un flujo donde el modelo devuelve un veredicto estructurado que el código valida y persiste de forma síncrona en su propia transacción. El cambio, medido sobre uno de los agentes, redujo la latencia de un rango de 90–200 s a una media de 8,3 s y eliminó los fallos intermitentes de escritura.
 - **Confirmación humana implementada como guarda de código**, no como instrucción al modelo. Una auditoría interna rechazó una primera versión del control de envío de propuestas por estar implementada únicamente en el prompt; se corrigió como validación real en `create()`/`write()`, donde el agente no puede saltársela aunque el modelo "decida" hacerlo.
 - **Extracción documental validada contra conjuntos de prueba adversariales** antes de confiar en ella (el caso de Sara con CVs es el más medido, pero el patrón se repite en otros agentes).
@@ -61,8 +61,8 @@ La segunda dificultad relevante, transversal a varios de los siete agentes, fue 
 
 ## Estado honesto
 
-- **Validados funcionalmente en entorno de staging** (`demo-staging`), con suites de test propias y baterías de prueba ejecutadas como usuario real. No están desplegados en producción de cliente.
-- Cada agente tiene matices propios de estado: por ejemplo, el envío real de trámites de Emilio ante la Seguridad Social sigue pendiente de un trámite administrativo de autorización (no de un bloqueo técnico); Marina tiene su motor de validación construido y verificado, a la espera de que el cliente aporte los rangos específicos de alguna de sus instalaciones.
+- **Validados funcionalmente en un entorno de staging**, con suites de test propias y baterías de prueba ejecutadas como usuario real. No están desplegados en producción de cliente.
+- Cada agente tiene matices propios de estado: por ejemplo, el envío real de trámites de Emilio ante la Seguridad Social sigue pendiente de un trámite administrativo de autorización (no de un bloqueo técnico); Marina tiene su motor de validación construido y verificado, parametrizable por instalación mediante rangos configurables.
 - El patrón arquitectónico (usuario de servicio, veredicto JSON, guarda en el ORM, gate humano) es el elemento que se reutiliza entre los siete; cada dominio añade su propia lógica e integraciones externas específicas.
 
 ## Stack
